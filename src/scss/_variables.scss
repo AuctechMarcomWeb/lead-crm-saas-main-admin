@@ -1,0 +1,15 @@
+// Variable overrides
+//
+// If you want to customize your project please add your variables below.
+
+$enable-deprecation-messages: false !default;
+
+// ── Font family — Inter
+// DO NOT set $font-size-base here — CoreUI uses rem based on html:16px
+// Changing font-size-base breaks the entire rem chain (sidebar, headers, etc.)
+$font-family-base:        "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$font-family-sans-serif:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$line-height-base:        1.5;
+
+// Sidebar width
+$sidebar-width: 280px;
