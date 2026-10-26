@@ -8,7 +8,7 @@ import { AppContext } from '../../../Context/AppContext'
 import { postRequest } from '../../../Helpers'
 
 import logo from '../../../assets/auctech-logo.png'
-import loginImg from '../../../assets/logins.jpg'
+import loginImg from '../../../assets/logins.png'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -77,7 +77,7 @@ const Login = () => {
       <div
         style={{
           flex: 1,
-          backgroundColor: '#00007B',
+          backgroundColor: '#050505',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -249,7 +249,7 @@ const Login = () => {
                 height: '45px',
                 border: 'none',
                 borderRadius: '6px',
-                background: '#006aa3',
+                background: '#f22d09',
                 color: '#fff',
                 fontWeight: 600,
                 cursor: 'pointer',

@@ -83,7 +83,7 @@ const AdminSupportList = () => {
 
         {
             key: 'schoolName',
-            label: 'School',
+            label: 'Agency',
             width: 200,
         },
 
@@ -200,7 +200,7 @@ const AdminSupportList = () => {
                     ...item,
 
                     schoolName:
-                        item?.schoolId?.schoolName || '-',
+                        item?.schoolId?.agencyName || '-',
 
                     createdAt:
                         dayjs(item.createdAt)
@@ -346,12 +346,12 @@ const AdminSupportList = () => {
 
                     </div>
 
-                    {/* SCHOOL */}
+                    {/* AGENCY */}
 
                     <div className="w-full sm:w-[220px]">
 
                         <label className="block text-xs font-medium mb-1 tracking-wide">
-                            SCHOOL
+                            AGENCY
                         </label>
 
                         <select
@@ -366,7 +366,7 @@ const AdminSupportList = () => {
                         >
 
                             <option value="">
-                                All Schools
+                                All Agencies
                             </option>
 
                             {
@@ -376,7 +376,7 @@ const AdminSupportList = () => {
                                         key={school._id}
                                         value={school._id}
                                     >
-                                        {school.schoolName}
+                                        {school.agencyName}
                                     </option>
 
                                 ))
@@ -409,13 +409,13 @@ const AdminSupportList = () => {
                                 All Roles
                             </option>
 
-                            <option value="Teacher">
+                            {/* <option value="Teacher">
                                 Teacher
                             </option>
 
                             <option value="User">
                                 Student
-                            </option>
+                            </option> */}
 
                             <option value="Admin">
                                 Admin

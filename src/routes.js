@@ -11,7 +11,7 @@ import SchoolDashboard from './views/Features/SchoolManagement/SchoolDetails/sch
 import AdminSupportList from './views/Features/Help&Support/Help&Support'
 import LeadsListing from './views/Features/Leads/LeadsListing'
 import BillingReport from './views/Features/Reports/BillingReport'
-import SchoolBillingReport from './views/Features/Reports/SchoolBillingReport'
+import AgencyBillingReport from './views/Features/Reports/SchoolBillingReport'
 import OverdueReport from './views/Features/Reports/OverdueReport'
 import SessionBillingReport from './views/Features/Reports/SessionBillingReport'
 import CollectionSummaryReport from './views/Features/Reports/CollectionSummaryReport'
@@ -74,7 +74,7 @@ const routes = [
   },
   {
     path: '/reports/school',
-    element: SchoolBillingReport,
+    element: AgencyBillingReport,
     roles: ['SuperAdmin', 'Admin'],
   },
   {

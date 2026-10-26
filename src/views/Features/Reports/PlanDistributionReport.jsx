@@ -124,8 +124,8 @@ const PlanDistributionReport = () => {
       'Start Date':    r.currentPlan?.startDate ? dayjs(r.currentPlan.startDate).format('DD MMM YYYY') : '—',
       'End Date':      r.currentPlan?.endDate   ? dayjs(r.currentPlan.endDate).format('DD MMM YYYY')   : '—',
       'Days Left':     r.currentPlan?.endDate   ? Math.max(0, dayjs(r.currentPlan.endDate).diff(dayjs(), 'day')) : '—',
-      'Student Limit': r.totalStudentLimit || 0,
-      'Used Students': r.usedStudents || 0,
+      'Lead Limit':    r.totalStudentLimit || 0,
+      'Used Leads':    r.usedStudents || 0,
       'Usage %':       r.totalStudentLimit > 0 ? `${Math.round((r.usedStudents / r.totalStudentLimit) * 100)}%` : 'Unlimited',
     }))
     const ws = XLSX.utils.json_to_sheet(rows)
@@ -146,7 +146,7 @@ const PlanDistributionReport = () => {
       render: (_, __, i) => i + 1,
     },
     {
-      title: 'School',
+      title: 'Agency',
       render: (_, row) => (
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, color: '#111' }}>{row.tenantDetails?.schoolName || '—'}</div>
@@ -201,7 +201,7 @@ const PlanDistributionReport = () => {
       },
     },
     {
-      title: 'Student Usage',
+      title: 'Lead Usage',
       align: 'center',
       render: (_, row) => (
         <UsageBar used={row.usedStudents || 0} total={row.totalStudentLimit || 0} />
@@ -241,7 +241,7 @@ const PlanDistributionReport = () => {
             <PieChart size={20} className="text-[#185FA5]" />
             Plan Distribution Report
           </h1>
-          <p className="text-sm text-gray-500">Which tenant are on which plans, with student usage & expiry</p>
+          <p className="text-sm text-gray-500">Which tenant are on which plans, with lead usage & expiry</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <button onClick={fetchData} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 8, border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer', fontSize: 13 }}>
@@ -255,7 +255,7 @@ const PlanDistributionReport = () => {
 
       {/* Distribution tiles */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 16 }}>
-        <DistTile label="Total Schools"  count={total}     total={total} color="#185FA5" bg="#EAF2FF" Icon={Users} />
+        <DistTile label="Total Agencies" count={total}     total={total} color="#185FA5" bg="#EAF2FF" Icon={Users} />
         <DistTile label="Active Plans"   count={active}    total={total} color="#16a34a" bg="#dcfce7" Icon={CreditCard} />
         <DistTile label="On Trial"       count={trial}     total={total} color="#2563eb" bg="#dbeafe" Icon={Zap} />
         <DistTile label="Expired"        count={expired}   total={total} color="#dc2626" bg="#fee2e2" Icon={AlertTriangle} />
@@ -267,7 +267,7 @@ const PlanDistributionReport = () => {
       {expiringSoon > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderRadius: 10, background: '#fff7ed', border: '1px solid #fed7aa', marginBottom: 14, fontSize: 13, color: '#ea580c', fontWeight: 500 }}>
           <AlertTriangle size={15} />
-          {expiringSoon} school{expiringSoon > 1 ? 's' : ''} — subscription expiring within 30 days. Consider renewing.
+          {expiringSoon} agency{expiringSoon > 1 ? 'ies' : ''} — subscription expiring within 30 days. Consider renewing.
         </div>
       )}
 

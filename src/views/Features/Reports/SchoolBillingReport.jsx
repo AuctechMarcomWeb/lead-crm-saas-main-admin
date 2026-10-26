@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {
-  School, CheckCircle, XCircle, Clock, AlertCircle,
+  Building2, CheckCircle, XCircle, Clock, AlertCircle,
   IndianRupee, Download, FileText, ArrowLeft, TrendingUp, RefreshCw
 } from 'lucide-react'
 import { Table, Tag, Select, Empty, Tooltip, Modal } from 'antd'
@@ -78,11 +78,11 @@ const MarkPaidModal = ({ open, record, onClose, onSuccess }) => {
 }
 
 /* ═══ MAIN ═══ */
-const SchoolBillingReport = () => {
+const AgencyBillingReport = () => {
   const navigate = useNavigate()
-  const [schools, setSchools] = useState([])
-  const [selectedSchool, setSelectedSchool] = useState(null)
-  const [selectedSchoolData, setSelectedSchoolData] = useState(null)
+  const [agencies, setAgencies] = useState([])
+  const [selectedAgency, setSelectedAgency] = useState(null)
+  const [selectedAgencyData, setSelectedAgencyData] = useState(null)
   const [selectedYear, setSelectedYear] = useState(dayjs().year())
   const [data, setData] = useState([])
   const [annualSummary, setAnnualSummary] = useState(null)
@@ -96,21 +96,21 @@ const SchoolBillingReport = () => {
     getRequest('tenant?isPagination=false')
       .then((res) => {
         const list = res?.data?.data?.tenants || []
-        setSchools(list)
-        if (list.length > 0) { setSelectedSchool(list[0]._id); setSelectedSchoolData(list[0]) }
+        setAgencies(list)
+        if (list.length > 0) { setSelectedAgency(list[0]._id); setSelectedAgencyData(list[0]) }
       })
       .catch(() => {})
   }, [])
 
-  /* ── Fetch school annual report ── */
-  const fetchSchoolReport = useCallback(() => {
-    if (!selectedSchool) return
+  /* ── Fetch agency annual report ── */
+  const fetchAgencyReport = useCallback(() => {
+    if (!selectedAgency) return
     setLoading(true)
 
-    // monthly-billing endpoint se school ka saara data fetch karo
+    // monthly-billing endpoint se agency ka saara data fetch karo
     // year filter: us year ke sab months = YYYY-01 to YYYY-12
     const params = new URLSearchParams({
-      tenantId:     selectedSchool,
+      tenantId:     selectedAgency,
       isPagination: 'false',
     })
 
@@ -133,14 +133,14 @@ const SchoolBillingReport = () => {
         setAnnualSummary({ totalBilled, totalPaid, totalPending })
       })
       .catch(() => {
-        toast.error('Failed to load school report')
+        toast.error('Failed to load agency report')
         setData([])
         setAnnualSummary(null)
       })
       .finally(() => setLoading(false))
-  }, [selectedSchool, selectedYear])
+  }, [selectedAgency, selectedYear])
 
-  useEffect(() => { fetchSchoolReport() }, [fetchSchoolReport])
+  useEffect(() => { fetchAgencyReport() }, [fetchAgencyReport])
 
   /* ── Export Excel ── */
   const exportExcel = () => {
@@ -148,7 +148,7 @@ const SchoolBillingReport = () => {
     const rows = data.map((row, i) => ({
       'Sr.': i + 1,
       'Month': dayjs(row.billingMonth + '-01').format('MMM YYYY'),
-      'Students': row.studentCount || 0,
+      'Leads': row.studentCount || 0,
       'Amount (₹)': row.totalAmount || 0,
       'Status': row.paidStatus || '—',
       'Due Date': row.dueDate ? dayjs(row.dueDate).format('DD MMM YYYY') : '—',
@@ -160,7 +160,7 @@ const SchoolBillingReport = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Annual Report')
     const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
     saveAs(new Blob([buf], { type: 'application/octet-stream' }),
-      `${selectedSchoolData?.schoolName || 'school'}-${selectedYear}.xlsx`)
+      `${selectedAgencyData?.schoolName || 'agency'}-${selectedYear}.xlsx`)
     toast.success('Excel exported')
   }
 
@@ -169,14 +169,14 @@ const SchoolBillingReport = () => {
     if (!data.length) { toast.error('No data to export'); return }
     const doc = new jsPDF()
     doc.setFontSize(14)
-    doc.text(`${selectedSchoolData?.schoolName || 'School'} — Annual Report ${selectedYear}`, 14, 15)
+    doc.text(`${selectedAgencyData?.schoolName || 'Agency'} — Annual Report ${selectedYear}`, 14, 15)
     if (annualSummary) {
       doc.setFontSize(9)
       doc.text(`Total Billed: ₹${annualSummary.totalBilled?.toLocaleString('en-IN')}  |  Paid: ₹${annualSummary.totalPaid?.toLocaleString('en-IN')}  |  Pending: ₹${annualSummary.totalPending?.toLocaleString('en-IN')}`, 14, 23)
     }
     doc.autoTable({
       startY: 28,
-      head: [['Sr', 'Month', 'Students', 'Amount', 'Status', 'Due Date', 'Paid Date']],
+      head: [['Sr', 'Month', 'Leads', 'Amount', 'Status', 'Due Date', 'Paid Date']],
       body: data.map((row, i) => [
         i + 1,
         dayjs(row.billingMonth + '-01').format('MMM YYYY'),
@@ -189,7 +189,7 @@ const SchoolBillingReport = () => {
       styles: { fontSize: 8 },
       headStyles: { fillColor: [12, 59, 115] },
     })
-    doc.save(`${selectedSchoolData?.schoolName || 'school'}-${selectedYear}.pdf`)
+    doc.save(`${selectedAgencyData?.schoolName || 'agency'}-${selectedYear}.pdf`)
     toast.success('PDF exported')
   }
 
@@ -201,7 +201,7 @@ const SchoolBillingReport = () => {
       render: (m) => <span className="font-medium text-gray-800">{dayjs(m + '-01').format('MMMM YYYY')}</span>,
     },
     {
-      title: 'Students',
+      title: 'Leads',
       dataIndex: 'studentCount',
       align: 'center',
       render: (v) => <span className="text-sm font-medium text-gray-700">{v ?? '—'}</span>,
@@ -286,10 +286,10 @@ const SchoolBillingReport = () => {
           </button>
           <div>
             <h1 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
-              <School size={20} className="text-[#e24028]" />
-              School-wise Billing Report
+              <Building2 size={20} className="text-[#e24028]" />
+              Agency-wise Billing Report
             </h1>
-            <p className="text-sm text-gray-500">Annual payment history per school</p>
+            <p className="text-sm text-gray-500">Annual payment history per agency</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -308,19 +308,19 @@ const SchoolBillingReport = () => {
       <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
         <div className="flex flex-wrap gap-3 items-end">
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-1">School</label>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Agency</label>
             <Select
-              showSearch placeholder="Select school"
-              value={selectedSchool}
+              showSearch placeholder="Select agency"
+              value={selectedAgency}
               onChange={(v) => {
-                setSelectedSchool(v)
-                setSelectedSchoolData(schools.find((s) => s._id === v) || null)
+                setSelectedAgency(v)
+                setSelectedAgencyData(agencies.find((s) => s._id === v) || null)
               }}
               className="w-60" size="middle" optionFilterProp="label"
             >
-              {schools.map((s) => (
-                <Option key={s._id} value={s._id} label={s.schoolName}>
-                  <span className="text-sm">{s.schoolName}</span>
+              {agencies.map((s) => (
+                <Option key={s._id} value={s._id} label={s.agencyName}>
+                  <span className="text-sm">{s.agencyName}</span>
                 </Option>
               ))}
             </Select>
@@ -337,19 +337,19 @@ const SchoolBillingReport = () => {
       </div>
 
       {/* Annual Summary */}
-      {selectedSchoolData && (
+      {selectedAgencyData && (
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
           <div className="flex items-center gap-3 mb-4">
-            {selectedSchoolData.logo ? (
-              <img src={selectedSchoolData.logo} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-200" />
+            {selectedAgencyData.logo ? (
+              <img src={selectedAgencyData.logo} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-200" />
             ) : (
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
-                <School className="w-6 h-6 text-blue-600" />
+                <Building2 className="w-6 h-6 text-blue-600" />
               </div>
             )}
             <div>
-              <h2 className="text-base font-semibold text-gray-800">{selectedSchoolData.schoolName}</h2>
-              <p className="text-xs text-gray-400">{selectedSchoolData.subdomain}.schoolcloudx.com · Annual Report {selectedYear}</p>
+              <h2 className="text-base font-semibold text-gray-800">{selectedAgencyData.schoolName}</h2>
+              <p className="text-xs text-gray-400">{selectedAgencyData.subdomain}.schoolcloudx.com · Annual Report {selectedYear}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -376,7 +376,7 @@ const SchoolBillingReport = () => {
           rowKey={(r) => r._id || r.billingMonth}
           loading={loading}
           pagination={false}
-          locale={{ emptyText: <Empty description="No billing records found for this school" /> }}
+          locale={{ emptyText: <Empty description="No billing records found for this agency" /> }}
           scroll={{ x: 'max-content' }}
           rowClassName={(row) =>
             row.status === 'OVERDUE' ? 'bg-red-50/40' :
@@ -390,10 +390,10 @@ const SchoolBillingReport = () => {
         open={!!markPaidRecord}
         record={markPaidRecord}
         onClose={() => setMarkPaidRecord(null)}
-        onSuccess={fetchSchoolReport}
+        onSuccess={fetchAgencyReport}
       />
     </div>
   )
 }
 
-export default SchoolBillingReport
+export default AgencyBillingReport

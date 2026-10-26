@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {
   BarChart2, Download, CheckCircle, XCircle, Clock, AlertCircle,
-  IndianRupee, School, TrendingUp, Filter, X,
+  IndianRupee, Building2, TrendingUp, Filter, X,
   FileText, RefreshCw, Zap, Info
 } from 'lucide-react'
 import { Table, Pagination, Empty, Select, Tooltip, Modal } from 'antd'
@@ -61,7 +61,7 @@ const StatusBadge = ({ status }) => {
 
 /* ═══════════════════════════════════════════════
    GENERATE BILLS MODAL
-   — fetches all active tenant + their live student
+   — fetches all active tenant + their live lead
      counts, shows preview, then sends to backend
 ═══════════════════════════════════════════════ */
 const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
@@ -86,7 +86,7 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
     if (!open) { setStep('config'); setPreview([]); setGeneratedResult(null) }
   }, [open])
 
-  /* Step 1 → Step 2: Fetch all tenant + their live student counts + subscription addons */
+  /* Step 1 → Step 2: Fetch all tenant + their live lead counts + subscription addons */
   const handlePreview = async () => {
     setLoadingPreview(true)
     try {
@@ -102,13 +102,13 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
       const schoolsRes = await getRequest('tenant?isPagination=false&isActive=true')
       const schools = schoolsRes?.data?.data?.tenants || []
 
-      // For each school fetch student count + subscription addons concurrently
+      // For each school fetch lead count + subscription addons concurrently
       const rows = await Promise.all(
         schools.map(async (school) => {
           try {
             const [detailRes] = await Promise.all([
               getRequest(`tenant/${school._id}`),
-              // prefetch ignored — recalculated below with real student count
+              // prefetch ignored — recalculated below with real lead count
               Promise.resolve(null),
             ])
 
@@ -160,7 +160,7 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
     }
   }
 
-  /* Allow admin to override individual student count — re-fetch preview from backend */
+  /* Allow admin to override individual lead count — re-fetch preview from backend */
   const updateCount = async (id, val) => {
     const count = Number(val) || 0
     // Optimistically update count first
@@ -199,7 +199,7 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
     }
   }
 
-  /* Step 2 → Step 3: Generate bills — individual per school so overrides work */
+  /* Step 2 → Step 3: Generate bills — individual per agency so overrides work */
   const handleGenerate = async () => {
     setGenerating(true)
     setStep('generating')
@@ -292,7 +292,7 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-2">
               <Info size={14} className="text-blue-500 mt-0.5 flex-shrink-0" />
               <p className="text-xs text-blue-700">
-                This will fetch <strong>live student counts</strong> from each school's LMS,
+                This will fetch <strong>live lead counts</strong> from each agency's LMS,
                 calculate the price using current pricing rules, and create pending billing
                 records for all active tenant in one click.
               </p>
@@ -341,11 +341,11 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
             {/* Summary bar */}
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-center">
-                <p className="text-xs text-gray-500">Schools</p>
+                <p className="text-xs text-gray-500">Agencies</p>
                 <p className="text-lg font-bold text-[#0c3b73]">{preview.length}</p>
               </div>
               <div className="bg-violet-50 border border-violet-100 rounded-lg p-3 text-center">
-                <p className="text-xs text-gray-500">Total Students</p>
+                <p className="text-xs text-gray-500">Total Leads</p>
                 <p className="text-lg font-bold text-violet-700">
                   {preview.reduce((s, r) => s + r.studentCount, 0).toLocaleString('en-IN')}
                 </p>
@@ -359,7 +359,7 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
             </div>
 
             <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
-              <Info size={11} /> You can override student counts below before generating.
+              <Info size={11} /> You can override lead counts below before generating.
             </p>
 
             {/* School preview table */}
@@ -367,8 +367,8 @@ const GenerateBillsModal = ({ open, onClose, onSuccess }) => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0">
                   <tr style={{ backgroundColor: '#0c3b73' }}>
-                    <th className="text-left text-white px-3 py-2 font-medium">School</th>
-                    <th className="text-center text-white px-3 py-2 font-medium w-32">Students (live)</th>
+                    <th className="text-left text-white px-3 py-2 font-medium">Agency</th>
+                    <th className="text-center text-white px-3 py-2 font-medium w-32">Leads (live)</th>
                     <th className="text-center text-white px-3 py-2 font-medium w-28">Sub. Addons</th>
                     <th className="text-right text-white px-3 py-2 font-medium w-28">Amount</th>
                   </tr>
@@ -683,10 +683,10 @@ const BillingReport = () => {
     if (!data.length) { toast.error('No data to export'); return }
     const rows = data.map((row, i) => ({
       'Sr.': i + 1,
-      'School': row.tenantDetails?.schoolName || '—',
+      'Agency': row.tenantDetails?.schoolName || '—',
       'Subdomain': row.tenantDetails?.subdomain || '—',
       'Month': row.billingMonth || '—',
-      'Students': row.studentCount || 0,
+      'Leads': row.studentCount || 0,
       'Amount (₹)': row.totalAmount || 0,
       'Status': row.status || '—',
       'Due Date': row.dueDate ? dayjs(row.dueDate).format('DD MMM YYYY') : '—',
@@ -717,7 +717,7 @@ const BillingReport = () => {
     }
     doc.autoTable({
       startY: 28,
-      head: [['Sr', 'School', 'Month', 'Students', 'Amount', 'Status', 'Due Date', 'Paid Date']],
+      head: [['Sr', 'Agency', 'Month', 'Leads', 'Amount', 'Status', 'Due Date', 'Paid Date']],
       body: data.map((row, i) => [
         i + 1,
         row.tenantDetails?.schoolName || '—',
@@ -745,7 +745,7 @@ const BillingReport = () => {
       render: (_, __, i) => (page - 1) * limit + i + 1,
     },
     {
-      title: 'School',
+      title: 'Agency',
       key: 'school',
       render: (_, row) => {
         const s = row.tenantDetails
@@ -777,7 +777,7 @@ const BillingReport = () => {
       ) : '—',
     },
     {
-      title: 'Students',
+      title: 'Leads',
       dataIndex: 'studentCount',
       align: 'center',
       render: (v) => <span className="text-sm font-medium text-gray-700">{v ?? '—'}</span>,
@@ -876,7 +876,7 @@ const BillingReport = () => {
             <BarChart2 size={20} className="text-[#e24028]" />
             Billing Report
           </h1>
-          <p className="text-sm text-gray-500">Monthly school-wise billing and payment tracking</p>
+          <p className="text-sm text-gray-500">Monthly agency-wise billing and payment tracking</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           {/* ⚡ MAIN ACTION — Generate Bills */}
@@ -901,7 +901,7 @@ const BillingReport = () => {
       {/* KPI Cards */}
       {summary && (
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
-          <KPICard label="Total Schools" value={summary.totalSchools || 0} icon={School} color="blue" />
+          <KPICard label="Total Agencies" value={summary.totalSchools || 0} icon={Building2} color="blue" />
           <KPICard label="Total Billed" value={`₹${(summary.totalAmount || 0).toLocaleString('en-IN')}`} icon={IndianRupee} color="violet" />
           <KPICard label="Collected" value={`₹${(summary.collectedAmount || 0).toLocaleString('en-IN')}`} sub={`${summary.paidCount || 0} tenant paid`} icon={CheckCircle} color="green" />
           <KPICard label="Outstanding" value={`₹${(summary.pendingAmount || 0).toLocaleString('en-IN')}`} sub={`${summary.unpaidCount || 0} tenant pending`} icon={XCircle} color="red" />
@@ -932,7 +932,7 @@ const BillingReport = () => {
             </Select>
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-1">School</label>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Agency</label>
             <Select
               allowClear showSearch placeholder="All tenant"
               value={selectedSchool} onChange={setSelectedSchool}

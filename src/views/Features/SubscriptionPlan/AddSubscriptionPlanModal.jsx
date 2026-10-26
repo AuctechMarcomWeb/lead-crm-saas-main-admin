@@ -21,7 +21,6 @@ const EMPTY_FORM = {
   billingCycle: 'Monthly',
   price: '',
   features: [''],
-  studentLimit: '',
   trialDays: '',
 }
 
@@ -41,7 +40,6 @@ const SubscriptionModal = ({ open, onClose, editData, planType = 'Plan', refresh
         billingCycle: editData.billingCycle || 'Monthly',
         price:        editData.price !== undefined ? String(editData.price) : '',
         features:     editData.features?.length ? editData.features : [''],
-        studentLimit: editData.studentLimit !== undefined ? String(editData.studentLimit) : '',
         trialDays:    editData.trialDays !== undefined ? String(editData.trialDays) : '',
       })
     } else {
@@ -67,10 +65,6 @@ const SubscriptionModal = ({ open, onClose, editData, planType = 'Plan', refresh
       e.price = 'Price is required'
     else if (isNaN(Number(form.price)) || Number(form.price) < 0)
       e.price = 'Enter a valid positive price'
-    if (!form.studentLimit)
-      e.studentLimit = 'Student limit is required'
-    else if (isNaN(Number(form.studentLimit)) || Number(form.studentLimit) < 1)
-      e.studentLimit = 'Enter a valid student limit (minimum 1)'
     if (!form.features.filter((f) => f.trim()).length)
       e.features = 'At least one feature is required'
     return e
@@ -89,7 +83,6 @@ const SubscriptionModal = ({ open, onClose, editData, planType = 'Plan', refresh
         name: form.name.trim(),
         ...(isEdit ? {} : { planType: form.planType }),
         price:        Number(form.price) || 0,
-        studentLimit: Number(form.studentLimit) || 0,
         billingCycle: form.billingCycle,
         features:     form.features.filter((f) => f.trim()),
         trialDays:    Number(form.trialDays) || 0,
@@ -214,18 +207,6 @@ const SubscriptionModal = ({ open, onClose, editData, planType = 'Plan', refresh
           </Field>
         </div>
 
-        {/* ── Student Limit ── */}
-        <Field label={<RequiredLabel label="Student Limit" />} error={errors.studentLimit}>
-          <input
-            type="number"
-            value={form.studentLimit}
-            onChange={(e) => set('studentLimit', e.target.value)}
-            placeholder={form.planType === 'Addon' ? 'e.g. 50' : 'e.g. 350'}
-            min={1}
-            className={inputCls(errors.studentLimit)}
-          />
-        </Field>
-
         {/* ── Trial Days (Plans only) ── */}
         {form.planType === 'Plan' && (
           <Field
@@ -242,14 +223,9 @@ const SubscriptionModal = ({ open, onClose, editData, planType = 'Plan', refresh
               min={0}
               className={inputCls(errors.trialDays)}
             />
-            {Number(form.trialDays) > 0 && Number(form.studentLimit) > 0 && (
+            {Number(form.trialDays) > 0 && (
               <InfoBox color="amber">
-                <strong>Free Trial:</strong> New tenant will get <strong>{form.trialDays} days</strong> free trial with a limit of <strong>{Number(form.studentLimit).toLocaleString('en-IN')} students</strong>.
-              </InfoBox>
-            )}
-            {Number(form.trialDays) > 0 && !Number(form.studentLimit) && (
-              <InfoBox color="red">
-                <strong>Note:</strong> Please set a Student Limit for the trial period (e.g. 350), otherwise the default of 350 will be applied.
+                <strong>Free Trial:</strong> New agencies will get <strong>{form.trialDays} days</strong> free trial.
               </InfoBox>
             )}
           </Field>

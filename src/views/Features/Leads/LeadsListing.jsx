@@ -75,15 +75,15 @@ const LeadsListing = () => {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#0c3b73]/10 flex items-center justify-center flex-shrink-0 border border-[#0c3b73]/20">
             <span className="text-sm font-semibold text-[#0c3b73] uppercase">
-              {(row.contactName || row.schoolName || '?')[0]}
+              {(row.contactName || row.agencyName || '?')[0]}
             </span>
           </div>
           <div>
             <p className="font-medium text-gray-800 text-sm leading-tight">
-              {row.contactName || row.schoolName || '—'}
+              {row.contactName || row.agencyName || '—'}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {row.schoolEmail}
+              {row.agencyEmail || row.schoolEmail}
             </p>
           </div>
         </div>
@@ -142,11 +142,11 @@ const LeadsListing = () => {
       },
     },
     {
-      title: 'School Name',
-      key: 'schoolName',
+      title: 'Agency Name',
+      key: 'agencyName',
       render: (_, row) =>
-        row.status === 'COMPLETED' && row.schoolName
-          ? <span className="text-xs font-medium text-gray-700">{row.schoolName}</span>
+        row.status === 'COMPLETED' && row.agencyName
+          ? <span className="text-xs font-medium text-gray-700">{row.agencyName}</span>
           : <span className="text-xs text-gray-400 italic">Not filled yet</span>,
     },
     {
@@ -205,10 +205,10 @@ const LeadsListing = () => {
         <div>
           <h1 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
             <UserPlus size={20} className="text-[#e24028]" />
-            Leads & Registrations
+            Leads & Agency Registrations
           </h1>
           <p className="text-sm text-gray-500">
-            Website registrations — OTP verified leads and completed tenant
+            Website registrations — OTP verified leads and completed agencies
           </p>
         </div>
         {/* Stats badges */}
@@ -308,14 +308,14 @@ const LeadsListing = () => {
               Are you sure you want to delete this registration? This action cannot be undone.
             </p>
             <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 text-sm space-y-1">
-              <p className="font-semibold text-gray-800">{deleteTarget.contactName || deleteTarget.schoolName || '—'}</p>
-              <p className="text-gray-500 text-xs">{deleteTarget.schoolEmail}</p>
+              <p className="font-semibold text-gray-800">{deleteTarget.contactName || deleteTarget.agencyName || '—'}</p>
+              <p className="text-gray-500 text-xs">{deleteTarget.agencyEmail || deleteTarget.schoolEmail}</p>
               {deleteTarget.subdomain && (
-                <p className="text-gray-400 text-xs font-mono">{deleteTarget.subdomain}.schoolcloudx.com</p>
+                <p className="text-gray-400 text-xs font-mono">{deleteTarget.subdomain}.app</p>
               )}
               {deleteTarget.status === 'COMPLETED' && (
                 <p className="text-red-500 text-xs mt-2 font-medium">
-                  ⚠️ This is a completed school — deletion will be blocked by the server.
+                  ⚠️ This is a completed agency — deletion will be blocked by the server.
                 </p>
               )}
             </div>

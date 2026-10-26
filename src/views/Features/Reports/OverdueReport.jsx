@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {
   AlertTriangle, CheckCircle, RefreshCw, IndianRupee,
-  Clock, School, Download, FileText
+  Clock, Building2, Download, FileText
 } from 'lucide-react'
 import { Table, Empty, Tooltip, Modal } from 'antd'
 import toast from 'react-hot-toast'
@@ -96,7 +96,7 @@ const OverdueReport = () => {
     if (!data.length) { toast.error('No overdue records'); return }
     const rows = data.map((row, i) => ({
       'Sr.': i + 1,
-      'School': row.tenantDetails?.schoolName || '—',
+      'Agency': row.tenantDetails?.schoolName || '—',
       'Month': row.billingMonth ? dayjs(row.billingMonth + '-01').format('MMM YYYY') : '—',
       'Amount (₹)': row.totalAmount || 0,
       'Due Date': row.dueDate ? dayjs(row.dueDate).format('DD MMM YYYY') : '—',
@@ -119,7 +119,7 @@ const OverdueReport = () => {
       render: (_, __, i) => i + 1,
     },
     {
-      title: 'School',
+      title: 'Agency',
       key: 'school',
       render: (_, row) => {
         const s = row.tenantDetails
@@ -200,7 +200,7 @@ const OverdueReport = () => {
             <AlertTriangle size={20} className="text-red-500" />
             Overdue Payments
           </h1>
-          <p className="text-sm text-gray-500">Schools with outstanding payments past due date</p>
+          <p className="text-sm text-gray-500">Agencies with outstanding payments past due date</p>
         </div>
         <div className="flex items-center gap-3">
           {data.length > 0 && (
@@ -221,7 +221,7 @@ const OverdueReport = () => {
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-center gap-2">
           <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
           <p className="text-sm text-red-700 font-medium">
-            {data.length} school{data.length > 1 ? 's have' : ' has'} overdue payments totalling ₹{totalOverdue.toLocaleString('en-IN')}
+            {data.length} agency{data.length > 1 ? 'ies have' : ' has'} overdue payments totalling ₹{totalOverdue.toLocaleString('en-IN')}
           </p>
         </div>
       )}

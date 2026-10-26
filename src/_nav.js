@@ -149,7 +149,7 @@ const useNav = () => {
         { component: CNavItem, name: 'Billing Report',         to: '/reports/billing'            },
         { component: CNavItem, name: 'Agency-wise Report',     to: '/reports/school'             },
         { component: CNavItem, name: 'Overdue Payments',       to: '/reports/overdue'            },
-        { component: CNavItem, name: 'Session Billing',        to: '/reports/session-billing'    },
+        // { component: CNavItem, name: 'Session Billing',        to: '/reports/session-billing'    },
         { component: CNavItem, name: 'Collection Summary',     to: '/reports/collection-summary' },
         { component: CNavItem, name: 'Plan Distribution',      to: '/reports/plan-distribution'  },
       ],
@@ -172,21 +172,21 @@ const useNav = () => {
       to: '/contact-inquiries',
       icon: <MessageSquare className={`me-3 ${yellow}`} style={iconStyle} />,
     },
-    {
-      component: CNavItem,
-      name: 'Newsletter',
-      to: '/newsletter',
-      icon: <Bell className={`me-3 ${yellow}`} style={iconStyle} />,
-    },
-    {
-      component: CNavGroup,
-      name: 'Documents',
-      icon: <FileText className={`me-3 ${yellow}`} style={iconStyle} />,
-      items: [
-        { component: CNavItem, name: 'Agreement Templates', to: '/documents/agreements' },
-        { component: CNavItem, name: 'NOC Templates',       to: '/documents/noc'        },
-      ],
-    },
+    // {
+    //   component: CNavItem,
+    //   name: 'Newsletter',
+    //   to: '/newsletter',
+    //   icon: <Bell className={`me-3 ${yellow}`} style={iconStyle} />,
+    // },
+    // {
+    //   component: CNavGroup,
+    //   name: 'Documents',
+    //   icon: <FileText className={`me-3 ${yellow}`} style={iconStyle} />,
+    //   items: [
+    //     { component: CNavItem, name: 'Agreement Templates', to: '/documents/agreements' },
+    //     { component: CNavItem, name: 'NOC Templates',       to: '/documents/noc'        },
+    //   ],
+    // },
   ]
 
   /* ================= ROLE SWITCH ================= */

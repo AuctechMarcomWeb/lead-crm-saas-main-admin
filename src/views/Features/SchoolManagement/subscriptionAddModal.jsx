@@ -116,7 +116,7 @@ const SchoolSelect = ({ value, onChange, options, loading, error }) => {
               flexShrink:0 }}>{sel.sub}</span>
           </div>
         ) : (
-          <span style={{ color: C.textMuted }}>{loading ? 'Loading…' : 'Select a school'}</span>
+          <span style={{ color: C.textMuted }}>{loading ? 'Loading…' : 'Select an Agency'}</span>
         )}
         {loading
           ? <Loader2 size={13} color={C.textMuted} style={{ animation:'spin 1s linear infinite', marginLeft:6 }} />
@@ -132,7 +132,7 @@ const SchoolSelect = ({ value, onChange, options, loading, error }) => {
             <div style={{ padding:8, borderBottom:`1px solid ${C.border}` }}>
               <input autoFocus type="text" value={q}
                 onChange={e => setQ(e.target.value)}
-                placeholder="Search school name…"
+                placeholder="Search agency name…"
                 style={{ width:'100%', height:32, padding:'0 10px', fontSize:12,
                   border:`1.5px solid ${C.border}`, borderRadius:6,
                   background: C.bgSoft, color: C.textDark, outline:'none',
@@ -388,7 +388,7 @@ const SummaryPanel = ({ school, plan, tab, studentCount, billingMonth, paidStatu
         <Shield size={22} color={C.borderHover} />
       </div>
       <p style={{ fontSize:13, fontWeight:600, color: C.textSoft, margin:0 }}>Summary will appear here</p>
-      <p style={{ fontSize:11, color: C.textMuted, margin:0 }}>Select a school and plan to continue</p>
+      <p style={{ fontSize:11, color: C.textMuted, margin:0 }}>Select a Agency and plan to continue</p>
     </div>
   )
 
@@ -406,12 +406,8 @@ const SummaryPanel = ({ school, plan, tab, studentCount, billingMonth, paidStatu
   const addonCost   = extraSlots * SLOT_PRICE
 
   const rows = isAddon
-    ? [['Add-on', plan.name], ['Quantity', `×${addonQty}`],
-       ['Students Added', `+${students.toLocaleString('en-IN')}`]]
+    ? [['Add-on', plan.name], ['Quantity', `×${addonQty}`]]
     : [['Plan', plan.name], ['Billing Cycle', plan.billingCycle],
-       ['Student Limit', planLimit > 0 ? planLimit.toLocaleString('en-IN') : 'Unlimited'],
-       ['Students', students > 0 ? students.toLocaleString('en-IN') : '—'],
-       ...(overflow ? [['Overflow', `+${(students - planLimit).toLocaleString('en-IN')}`]] : []),
        ['Billing Month', billingMonth || '—'],
        ['Payment', paidStatus]]
 
@@ -442,7 +438,7 @@ const SummaryPanel = ({ school, plan, tab, studentCount, billingMonth, paidStatu
           </div>
           <div style={{ minWidth:0 }}>
             <p style={{ margin:0, fontSize:13, fontWeight:700, color: C.textDark,
-              overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{school.schoolName}</p>
+              overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{school.schoolName || 'Agency'}</p>
             <p style={{ margin:0, fontSize:10, color: C.textMuted }}>{school.subdomain}.app</p>
           </div>
         </div>
@@ -611,7 +607,7 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
           <div>
             <p style={{ margin:0, fontSize:15, fontWeight:700, color: C.textDark, fontFamily: FONT }}>Assign Subscription</p>
             <p style={{ margin:0, fontSize:12, color: C.textMuted, fontWeight:400, fontFamily: FONT }}>
-              Configure and assign a plan or add-on to a school
+              Configure and assign a plan or add-on to an agency
             </p>
           </div>
         </div>
@@ -622,9 +618,9 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
         {/* ── LEFT FORM ── */}
         <div style={{ flex:1, overflowY:'auto', padding:'20px 24px', maxHeight:'76vh' }}>
 
-          {/* SCHOOL */}
+          {/* AGENCY */}
           <div style={{ marginBottom:22 }}>
-            <Label required>School</Label>
+            <Label required>Agency</Label>
             <SchoolSelect value={selSchool} loading={loadingSchools} error={errors.school}
               options={schoolOpts}
               onChange={v => { setSelSchool(v); setCount(''); setCountSrc(null); setErrors(p => ({ ...p, school: undefined })) }} />
@@ -738,8 +734,7 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
                     <div>
                       <p style={{ margin:0, fontSize:13, fontWeight:700, color:'#4c1d95' }}>{planData.name}</p>
                       <p style={{ margin:0, fontSize:11, color: C.purple }}>
-                        +{(planData.studentLimit * addonQty).toLocaleString('en-IN')} students
-                        &nbsp;·&nbsp; ₹{(planData.price * addonQty).toLocaleString('en-IN')}
+                        ₹{(planData.price * addonQty).toLocaleString('en-IN')}
                       </p>
                     </div>
                   </div>
@@ -765,42 +760,6 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
               </div>
             ) : (
               <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-                {/* student count */}
-                <div>
-                  <Label required hint="(auto-fetched from school)">Student Count</Label>
-                  {loadingCount
-                    ? <div style={{ height:38, border:`1.5px solid ${C.border}`, borderRadius:8,
-                        background: C.bgSoft, display:'flex', alignItems:'center', gap:8, padding:'0 12px' }}>
-                        <Loader2 size={12} color={C.textMuted} style={{ animation:'spin 1s linear infinite' }} />
-                        <span style={{ fontSize:12, color: C.textMuted }}>Fetching…</span>
-                      </div>
-                    : <div style={{ position:'relative' }}>
-                        <span style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)',
-                          pointerEvents:'none', display:'flex' }}>
-                          <Users size={12} color={C.textMuted} />
-                        </span>
-                        <input type="number" min={1} value={count} placeholder="e.g. 350"
-                          onChange={e => { setCount(e.target.value); setCountSrc('manual'); setErrors(p => ({ ...p, studentCount: undefined })) }}
-                          style={{ ...inputStyle(errors.studentCount), paddingLeft:30, paddingRight: countSrc === 'auto' ? 90 : 12 }} />
-                        {countSrc === 'auto' && (
-                          <div style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)',
-                            display:'flex', alignItems:'center', gap:6 }}>
-                            <span style={{ fontSize:10, fontWeight:700, color: C.green,
-                              display:'flex', alignItems:'center', gap:2 }}>
-                              <Check size={9} strokeWidth={3} />Auto
-                            </span>
-                            <button type="button"
-                              onClick={() => { setCount(''); setCountSrc('manual') }}
-                              style={{ fontSize:10, color: C.textMuted, background:'none', border:'none',
-                                cursor:'pointer', textDecoration:'underline', padding:0 }}>Edit</button>
-                          </div>
-                        )}
-                      </div>
-                  }
-                  <ErrMsg msg={errors.studentCount} />
-                  <OverflowWarning planData={planData} count={count} />
-                </div>
-
                 {/* month + due */}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                   <div>

@@ -75,7 +75,7 @@ const MarkPaidModal = ({ open, record, onClose, onSuccess }) => {
       {record && (
         <div className="space-y-3 mt-3">
           <div className="bg-gray-50 rounded-lg p-3 text-sm border border-gray-100">
-            <p className="font-semibold text-gray-800">{record.tenantDetails?.schoolName}</p>
+            <p className="font-semibold text-gray-800">{record.tenantDetails?.schoolName || 'Agency'}</p>
             <p className="text-gray-500 text-xs mt-0.5">
               Plan: {record.currentPlan?.name || record.currentPlanDetails?.name || '—'}
             </p>
@@ -238,29 +238,29 @@ const SubscriptionHistory = () => {
       render: (_, __, i) => (page - 1) * limit + i + 1,
     },
     {
-      title: 'School',
+      title: 'Agency',
       key: 'school',
       render: (_, row) => {
-        const school = row.tenantDetails
+        const agency = row.tenantDetails
         return (
           <div className="flex items-center gap-3">
-            {school?.logo ? (
+            {agency?.logo ? (
               <img
-                src={school.logo}
+                src={agency.logo}
                 alt=""
                 className="w-8 h-8 rounded-lg object-contain border border-gray-100"
                 onError={(e) => (e.target.style.display = 'none')}
               />
             ) : (
               <div className="w-8 h-8 rounded-lg bg-[#0c3b73]/10 flex items-center justify-center border border-gray-200 text-xs font-bold text-[#0c3b73]">
-                {school?.schoolName?.slice(0, 2).toUpperCase() || '--'}
+                {agency?.schoolName?.slice(0, 2).toUpperCase() || '--'}
               </div>
             )}
             <div>
               <p className="font-medium text-gray-800 leading-tight">
-                {school?.schoolName || '--'}
+                {agency?.schoolName || '--'}
               </p>
-              <p className="text-xs text-gray-400">{school?.subdomain || '—'}.app</p>
+              <p className="text-xs text-gray-400">{agency?.subdomain || '—'}.app</p>
             </div>
           </div>
         )
@@ -310,22 +310,6 @@ const SubscriptionHistory = () => {
           ₹{Number(v ?? 0).toLocaleString('en-IN')}
         </span>
       ),
-    },
-    {
-      title: 'Student Limit',
-      dataIndex: 'totalStudentLimit',
-      align: 'center',
-      render: (v) => (
-        <span className="text-gray-700 font-medium">
-          {v != null ? v.toLocaleString('en-IN') : '—'}
-        </span>
-      ),
-    },
-    {
-      title: 'Used',
-      dataIndex: 'usedStudents',
-      align: 'center',
-      render: (v) => <span className="text-gray-500 text-sm">{v ?? 0}</span>,
     },
     {
       title: 'Billing Month',
@@ -448,7 +432,7 @@ const SubscriptionHistory = () => {
             <CreditCard size={20} className="text-[#e24028]" />
             Subscription History
           </h1>
-          <p className="text-sm text-gray-500">View and manage all school subscription records</p>
+          <p className="text-sm text-gray-500">View and manage all agency subscription records</p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}

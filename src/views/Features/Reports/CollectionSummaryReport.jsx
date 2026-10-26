@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useEffect, useCallback } from 'react'
 import {
-  TrendingUp, IndianRupee, School, CheckCircle,
+  TrendingUp, IndianRupee, Building2, CheckCircle,
   Clock, AlertCircle, Download, RefreshCw, Percent,
 } from 'lucide-react'
 import { Select, Empty, Progress } from 'antd'
@@ -65,8 +65,8 @@ const KPI = ({ label, value, sub, Icon, color, bg }) => (
   </div>
 )
 
-// ── School row card ───────────────────────────────────────────
-const SchoolRow = ({ row, index }) => {
+// ── Agency row card ───────────────────────────────────────────
+const AgencyRow = ({ row, index }) => {
   const pct = row.totalSessionAmount > 0
     ? Math.round((row.totalPaid / row.totalSessionAmount) * 100)
     : 0
@@ -151,12 +151,12 @@ const CollectionSummaryReport = () => {
   useEffect(() => { fetchData() }, [fetchData])
 
   // ── Aggregations ──────────────────────────────────────────────
-  const totalSchools   = data.length
+  const totalAgencies   = data.length
   const totalBilled    = data.reduce((s, r) => s + (r.totalSessionAmount || 0), 0)
   const totalCollected = data.reduce((s, r) => s + (r.totalPaid || 0), 0)
   const totalDue       = data.reduce((s, r) => s + (r.totalDue || 0), 0)
   const fullyPaid      = data.filter((r) => r.status === 'FULLY_PAID').length
-  const overdueSchools = data.filter((r) => r.status === 'OVERDUE').length
+  const overdueAgencies = data.filter((r) => r.status === 'OVERDUE').length
   const recoveryRate   = totalBilled > 0 ? Math.round((totalCollected / totalBilled) * 100) : 0
 
   const paidStatuses    = data.filter((r) => r.status === 'FULLY_PAID').length
@@ -168,9 +168,9 @@ const CollectionSummaryReport = () => {
     if (!data.length) { toast.error('No data'); return }
     const rows = data.map((r, i) => ({
       'Sr.':            i + 1,
-      'School':         r.tenantDetails?.schoolName || '—',
+      'Agency':         r.tenantDetails?.schoolName || '—',
       'Session':        r.sessionYear,
-      'Students':       r.studentCount || 0,
+      'Leads':          r.studentCount || 0,
       'Total Billed':   r.totalSessionAmount || 0,
       'Total Paid':     r.totalPaid || 0,
       'Total Due':      r.totalDue || 0,
@@ -227,22 +227,22 @@ const CollectionSummaryReport = () => {
 
       {/* KPI row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 12, marginBottom: 16 }}>
-        <KPI label="Total Schools"    value={totalSchools}                                Icon={School}       color="#185FA5" bg="#EAF2FF" />
+        <KPI label="Total Agencies"   value={totalAgencies}                                Icon={Building2}    color="#185FA5" bg="#EAF2FF" />
         <KPI label="Total Billed"     value={`₹${totalBilled.toLocaleString('en-IN')}`}   Icon={IndianRupee}  color="#185FA5" bg="#EAF2FF" />
         <KPI label="Collected"        value={`₹${totalCollected.toLocaleString('en-IN')}`} Icon={CheckCircle} color="#16a34a" bg="#dcfce7" />
         <KPI label="Outstanding"      value={`₹${totalDue.toLocaleString('en-IN')}`}       Icon={AlertCircle} color="#dc2626" bg="#fee2e2" />
         <KPI label="Recovery Rate"    value={`${recoveryRate}%`}                           Icon={Percent}     color="#185FA5" bg="#EAF2FF" sub={`${fullyPaid} tenant fully paid`} />
-        <KPI label="Overdue Schools"  value={overdueSchools}                               Icon={Clock}       color="#dc2626" bg="#fee2e2" sub="past due date" />
+        <KPI label="Overdue Agencies" value={overdueAgencies}                              Icon={Clock}       color="#dc2626" bg="#fee2e2" sub="past due date" />
       </div>
 
       {/* Status breakdown bar */}
-      {totalSchools > 0 && (
+      {totalAgencies > 0 && (
         <div className="bg-white p-4 rounded-lg border border-gray-200 mb-4 shadow-sm">
           <StatusBar
             paid={paidStatuses}
             pending={pendingStatuses}
             overdue={overdueStatuses}
-            total={totalSchools}
+            total={totalAgencies}
           />
           {/* Recovery rate progress */}
           <div>
@@ -272,7 +272,7 @@ const CollectionSummaryReport = () => {
         </div>
       ) : view === 'cards' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
-          {data.map((row, i) => <SchoolRow key={row._id} row={row} index={i} />)}
+          {data.map((row, i) => <AgencyRow key={row._id} row={row} index={i} />)}
         </div>
       ) : (
         // Simple list view
@@ -280,7 +280,7 @@ const CollectionSummaryReport = () => {
           <table className="w-full text-sm">
             <thead style={{ background: '#0c3b73' }}>
               <tr>
-                {['Sr.', 'School', 'Students', 'Billed', 'Paid', 'Due', 'Months', 'Recovery', 'Status'].map((h) => (
+                {['Sr.', 'Agency', 'Leads', 'Billed', 'Paid', 'Due', 'Months', 'Recovery', 'Status'].map((h) => (
                   <th key={h} style={{ padding: '10px 12px', color: '#fff', fontWeight: 600, fontSize: 12, textAlign: h === 'Sr.' ? 'center' : 'left' }}>{h}</th>
                 ))}
               </tr>

@@ -55,10 +55,10 @@ const ViewSupportModal = ({ open, onClose, data }) => {
                     </div>
                 </div>
 
-                {/* School Details */}
+                {/* Agency Details */}
                 <div className="bg-gray-50 border rounded-xl p-3 mb-4">
                     <h3 className="text-sm text-gray-700 font-medium mb-4">
-                        School Information
+                        Agency Information
                     </h3>
 
                     <div className="flex flex-col md:flex-row gap-5">
@@ -68,7 +68,7 @@ const ViewSupportModal = ({ open, onClose, data }) => {
                             {data?.schoolId?.logo ? (
                                 <img
                                     src={data?.schoolId?.logo}
-                                    alt="school-logo"
+                                    alt="agency-logo"
                                     className="w-24 h-24 rounded-lg border object-cover"
                                 />
                             ) : (
@@ -83,21 +83,21 @@ const ViewSupportModal = ({ open, onClose, data }) => {
 
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">
-                                    School Name
+                                    Agency Name
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium">
-                                    {data?.schoolId?.schoolName || "—"}
+                                    {data?.schoolId?.agencyName || "—"}
                                 </p>
                             </div>
 
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">
-                                    School Code
+                                    Subdomain
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium">
-                                    {data?.schoolId?.schoolCode || "—"}
+                                    {data?.schoolId?.subdomain || "—"}
                                 </p>
                             </div>
 
@@ -108,7 +108,7 @@ const ViewSupportModal = ({ open, onClose, data }) => {
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium">
-                                    {data?.schoolId?.schoolContact || "—"}
+                                    {data?.schoolId?.agencyPhone || "—"}
                                 </p>
                             </div>
 
@@ -119,28 +119,28 @@ const ViewSupportModal = ({ open, onClose, data }) => {
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium break-all">
-                                    {data?.schoolId?.schoolEmail || "—"}
+                                    {data?.schoolId?.agencyEmail || "—"}
                                 </p>
                             </div>
 
                             <div>
                                 <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
                                     <UserOutlined />
-                                    Managed By
+                                    Contact Person
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium">
-                                    {data?.schoolId?.managedBy || "—"}
+                                    {data?.schoolId?.contactPerson1?.name || "—"}
                                 </p>
                             </div>
 
                             <div>
                                 <p className="text-xs text-gray-500 font-medium">
-                                    Medium
+                                    Business Type
                                 </p>
 
                                 <p className="text-sm text-gray-800 font-medium">
-                                    {data?.schoolId?.schoolMedium || "—"}
+                                    {data?.schoolId?.businessType || "—"}
                                 </p>
                             </div>
 
@@ -155,7 +155,7 @@ const ViewSupportModal = ({ open, onClose, data }) => {
                         </p>
 
                         <p className="text-sm text-gray-800 font-medium">
-                            {data?.schoolId?.schoolAddress || "—"}
+                            {data?.schoolId?.address?.line1 && `${data.schoolId.address.line1}${data.schoolId.address.line2 ? ', ' + data.schoolId.address.line2 : ''}, ${data.schoolId.address.city}, ${data.schoolId.address.state}, ${data.schoolId.address.pincode}` || "—"}
                         </p>
                     </div>
                 </div>
