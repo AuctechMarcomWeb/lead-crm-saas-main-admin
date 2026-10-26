@@ -79,7 +79,7 @@ const WARNINGS = {
     Icon: IconAlert,
     priority: 1,
     message: () =>
-      'Your school has not been activated yet. Please contact the administrator to set up your subscription.',
+      'Your agency has not been activated yet. Please contact the administrator to set up your subscription.',
   },
   EXPIRED: {
     bg: '#fef2f2', border: '#fca5a5', textColor: '#7f1d1d',
