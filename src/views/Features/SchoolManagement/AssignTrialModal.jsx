@@ -45,9 +45,15 @@ const PackageCard = ({ pkg, selected, onSelect }) => (
           </span>
           <span className="flex items-center gap-1 text-[11px] font-medium">
             {pkg.eligibleOnce ? (
-              <><CheckCircle size={11} className="text-orange-500" /><span className="text-orange-600">One-time only</span></>
+              <>
+                <CheckCircle size={11} className="text-orange-500" />
+                <span className="text-orange-600">One-time only</span>
+              </>
             ) : (
-              <><XCircle size={11} className="text-green-500" /><span className="text-green-600">Multiple allowed</span></>
+              <>
+                <XCircle size={11} className="text-green-500" />
+                <span className="text-green-600">Multiple allowed</span>
+              </>
             )}
           </span>
         </div>
@@ -79,12 +85,12 @@ const PackageCard = ({ pkg, selected, onSelect }) => (
 /* ════════════════════════════════════════════════
    ASSIGN TRIAL MODAL
 ════════════════════════════════════════════════ */
-const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
-  const [packages, setPackages]       = useState([])
-  const [pkgLoading, setPkgLoading]   = useState(false)
+const AssignTrialModal = ({ open, school: agency, onClose, onSuccess }) => {
+  const [packages, setPackages] = useState([])
+  const [pkgLoading, setPkgLoading] = useState(false)
   const [selectedPkg, setSelectedPkg] = useState(null)
-  const [force, setForce]             = useState(false)
-  const [assigning, setAssigning]     = useState(false)
+  const [force, setForce] = useState(false)
+  const [assigning, setAssigning] = useState(false)
 
   /* ── Load active packages when modal opens ── */
   useEffect(() => {
@@ -98,7 +104,7 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
       .finally(() => setPkgLoading(false))
   }, [open])
 
-  if (!school) return null
+  if (!agency) return null
 
   const chosen = packages.find((p) => p._id === selectedPkg)
 
@@ -110,10 +116,12 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
     setAssigning(true)
     try {
       await postRequest({
-        url:  `free-trial-packages/${selectedPkg}/assign/${school._id}`,
+        url: `free-trial-packages/${selectedPkg}/assign/${agency._id}`,
         cred: { force },
       })
-      toast.success(`Trial "${chosen?.name}" assigned to "${school.agencyName || school.schoolName || school.name}" successfully`)
+      toast.success(
+        `Trial "${chosen?.name}" assigned to "${agency.agencyName || agency.schoolName || agency.name}" successfully`,
+      )
       onSuccess?.()
       onClose()
     } catch (err) {
@@ -121,7 +129,8 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
       toast.error(msg)
       if (msg.toLowerCase().includes('already used')) {
         toast('Tip: Enable "Force Override" to bypass the one-time restriction', {
-          icon: '💡', duration: 4000,
+          icon: '💡',
+          duration: 4000,
         })
       }
     } finally {
@@ -141,8 +150,14 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
         <div className="flex items-center gap-3">
           <div
             style={{
-              width: 36, height: 36, borderRadius: 10, background: '#0c3b73',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: '#0c3b73',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             <Gift size={18} color="#fff" />
@@ -152,51 +167,50 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
               Assign Free Trial
             </p>
             <p className="text-xs text-gray-400 font-normal mt-0.5 m-0">
-              Select a trial package to assign to this school
+              Select a trial package to assign to this Agency
             </p>
           </div>
         </div>
       }
     >
       <div className="max-h-[72vh] overflow-y-auto pr-1 mt-3">
-
         {/* ── School Info ── */}
-        <SectionHeader title="School" />
+        <SectionHeader title="Agency" />
         <SectionBody>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-              {school.logo ? (
-                <img src={school.logo} alt="" className="w-full h-full object-contain p-0.5" />
+              {agency.logo ? (
+                <img src={agency.logo} alt="" className="w-full h-full object-contain p-0.5" />
               ) : (
                 <span className="text-xs font-bold text-[#0c3b73]">
-                  {(school.agencyName || school.schoolName || school.name || 'AG').slice(0, 2).toUpperCase()}
+                  {(agency.agencyName || agency.schoolName || agency.name || 'AG')
+                    .slice(0, 2)
+                    .toUpperCase()}
                 </span>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800 truncate">
-                {school.agencyName || school.schoolName || school.name}
+                {agency.agencyName || agency.schoolName || agency.name}
               </p>
-              <p className="text-[11px] text-gray-400 font-mono">{school.subdomain}</p>
+              <p className="text-[11px] text-gray-400 font-mono">{agency.subdomain}</p>
             </div>
             <span
               className={`text-[11px] font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ${
-                school.isActive
+                agency.isActive
                   ? 'bg-green-50 text-green-700 border border-green-200'
                   : 'bg-red-50 text-red-600 border border-red-200'
               }`}
             >
-              {school.isActive ? 'Active' : 'Inactive'}
+              {agency.isActive ? 'Active' : 'Inactive'}
             </span>
           </div>
-          {school.planStatus && (
+          {agency.planStatus && (
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
               <Zap size={12} className="text-[#0c3b73]" />
               Current subscription status:
-              <span className="font-semibold text-gray-700">{school.planStatus}</span>
-              {school.planName && (
-                <span className="text-gray-400">({school.planName})</span>
-              )}
+              <span className="font-semibold text-gray-700">{agency.planStatus}</span>
+              {agency.planName && <span className="text-gray-400">({agency.planName})</span>}
             </div>
           )}
         </SectionBody>
@@ -236,8 +250,8 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
             <div>
               <p className="text-sm font-semibold text-gray-700 leading-tight">Force Override</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                Enable this if the school has already used this trial package.
-                It bypasses the "one-time eligibility" restriction.
+                Enable this if the Agency has already used this trial package. It bypasses the
+                "one-time eligibility" restriction.
               </p>
             </div>
             <Switch
@@ -256,13 +270,16 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
             <SectionBody>
               <div className="grid grid-cols-2 gap-x-6 gap-y-1">
                 {[
-                  ['Agency',        school.agencyName || school.schoolName || school.name],
-                  ['Package',       chosen.name],
-                  ['Duration',      `${chosen.durationDays} days`],
-                  ['One-Time',      chosen.eligibleOnce ? 'Yes (once only)' : 'No'],
+                  ['Agency', agency.agencyName || agency.schoolName || agency.name],
+                  ['Package', chosen.name],
+                  ['Duration', `${chosen.durationDays} days`],
+                  ['One-Time', chosen.eligibleOnce ? 'Yes (once only)' : 'No'],
                   ['Force Override', force ? 'Yes' : 'No'],
                 ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between py-1 border-b border-gray-50 text-xs">
+                  <div
+                    key={k}
+                    className="flex justify-between py-1 border-b border-gray-50 text-xs"
+                  >
                     <span className="text-gray-400">{k}</span>
                     <span className="font-semibold text-gray-800 text-right">{v}</span>
                   </div>
@@ -271,7 +288,6 @@ const AssignTrialModal = ({ open, school, onClose, onSuccess }) => {
             </SectionBody>
           </>
         )}
-
       </div>
 
       {/* ── Footer ── */}
