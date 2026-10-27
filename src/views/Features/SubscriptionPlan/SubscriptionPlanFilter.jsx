@@ -9,17 +9,21 @@ const BILLING_CYCLES = ['Monthly', 'Yearly']
 
 const SubscriptionFilters = ({ onApply, onClear, appliedFilters }) => {
   const [draft, setDraft] = useState({
-    billingCycle: null,
-    minPrice: '',
-    maxPrice: '',
-    ...appliedFilters,
+    billingCycle: appliedFilters?.billingCycle || null,
+    minPrice: appliedFilters?.minPrice || '',
+    maxPrice: appliedFilters?.maxPrice || '',
   })
 
   const hasActive =
     appliedFilters?.billingCycle || appliedFilters?.minPrice || appliedFilters?.maxPrice
 
   const handleApply = () => {
-    onApply({ ...draft })
+    const filters = {
+      billingCycle: draft.billingCycle || null,
+      minPrice: draft.minPrice ? Number(draft.minPrice) : null,
+      maxPrice: draft.maxPrice ? Number(draft.maxPrice) : null,
+    }
+    onApply(filters)
   }
 
   const handleClear = () => {

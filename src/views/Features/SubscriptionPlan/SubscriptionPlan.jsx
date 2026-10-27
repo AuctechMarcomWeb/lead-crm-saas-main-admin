@@ -42,6 +42,11 @@ const SubscriptionListing = () => {
     setLoading(true)
     const params = { page, limit, planType: activeTab }
 
+    // Add filter params if they exist
+    if (appliedFilters.billingCycle) params.billingCycle = appliedFilters.billingCycle
+    if (appliedFilters.minPrice) params.minPrice = appliedFilters.minPrice
+    if (appliedFilters.maxPrice) params.maxPrice = appliedFilters.maxPrice
+
     getRequest(`subscriptionPlan?${new URLSearchParams(params).toString()}`)
       .then((res) => {
         setData(res?.data?.data?.plans || res?.data?.data?.list || [])

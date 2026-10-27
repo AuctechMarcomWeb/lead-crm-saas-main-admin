@@ -78,36 +78,20 @@ const SubscriptionHistoryFilters = ({
           />
         </div>
 
-        {/* School */}
-        <div className="flex flex-col w-full sm:w-[200px]">
-          <label className="text-xs font-medium text-gray-600 mb-1">School</label>
+        {/* Agency */}
+        <div className="flex flex-col w-full sm:w-[220px]">
+          <label className="text-xs font-medium text-gray-600 mb-1">Agency</label>
           <Select
             allowClear
-            showSearch
-            placeholder="All tenant"
+            placeholder="All Agencies"
             loading={schoolsLoading}
             value={draft.tenantId}
             onChange={(v) => set('tenantId', v)}
-            optionFilterProp="label"
             size="middle"
           >
-            {schools.map((s) => (
-              <Option key={s._id} value={s._id} label={s.schoolName}>
-                <div className="flex items-center gap-2">
-                  {s.logo ? (
-                    <img
-                      src={s.logo}
-                      alt=""
-                      className="w-4 h-4 rounded object-contain flex-shrink-0"
-                      onError={(e) => (e.target.style.display = 'none')}
-                    />
-                  ) : (
-                    <div className="w-4 h-4 rounded bg-gray-200 flex items-center justify-center text-[9px] font-bold text-gray-500 flex-shrink-0">
-                      {s.schoolName?.slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="text-sm truncate">{s.schoolName}</span>
-                </div>
+            {schools.map((agency) => (
+              <Option key={agency._id} value={agency._id}>
+                {agency.agencyName || agency.schoolName || agency.name}
               </Option>
             ))}
           </Select>
