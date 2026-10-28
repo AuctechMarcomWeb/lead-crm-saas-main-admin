@@ -554,7 +554,7 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
     if (!selSchool) e.school = 'Select a school'
     if (!selPlan)   e.plan   = 'Select a plan'
     if (activeTab === 'Plan') {
-      if (!count || Number(count) < 1) e.studentCount = 'Enter student count'
+      // Lead limit is optional for now
       if (!billMonth) e.billingMonth = 'Select billing month'
     }
     return e
@@ -760,6 +760,36 @@ const SubscriptionModal = ({ open, onClose, refresh, preSelectedSchoolId = null 
               </div>
             ) : (
               <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+                {/* lead/user limit */}
+                <div>
+                  <Label>Lead Limit</Label>
+                  <div style={{ position:'relative' }}>
+                    <span style={{ position:'absolute', left:10, top:'50%',
+                      transform:'translateY(-50%)', pointerEvents:'none', display:'flex' }}>
+                      <Users size={12} color={C.textMuted} />
+                    </span>
+                    <input 
+                      type="number" 
+                      min={0}
+                      value={count} 
+                      onChange={e => { 
+                        setCount(e.target.value); 
+                        setCountSrc('manual'); 
+                        setErrors(p => ({ ...p, studentCount: undefined })) 
+                      }}
+                      placeholder="Optional - leave blank for unlimited"
+                      style={{ ...inputStyle(errors.studentCount), paddingLeft:30 }} 
+                    />
+                  </div>
+                  <ErrMsg msg={errors.studentCount} />
+                  {countSrc === 'auto' && (
+                    <div style={{ marginTop:4, fontSize:10, color: C.textMuted, display:'flex', alignItems:'center', gap:4 }}>
+                      <CheckCircle size={10} color={C.green} />
+                      Auto-fetched from agency data
+                    </div>
+                  )}
+                </div>
+
                 {/* month + due */}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                   <div>
